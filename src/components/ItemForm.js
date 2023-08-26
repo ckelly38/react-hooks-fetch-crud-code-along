@@ -1,11 +1,36 @@
 import React, { useState } from "react";
 
-function ItemForm() {
+function ItemForm({ onAddItem }) {
   const [name, setName] = useState("");
   const [category, setCategory] = useState("Produce");
 
+  // Add function to handle submissions
+  function handleSubmit(e) {
+    e.preventDefault();
+    const itemData = {
+      name: name,
+      category: category,
+      isInCart: false,
+    };
+    const myconfigobj = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(itemData),
+    };
+    fetch("http://localhost:4000/items", myconfigobj)
+      .then((r) => r.json())
+      .then((newItem) => onAddItem(newItem))
+      .catch((err) => {
+        console.error("there was an error adding the data to the server!");
+        console.error(err);
+        alert("three was a problem putting the data on the server!");
+      });
+  }
+
   return (
-    <form className="NewItem">
+    <form className="NewItem" onSubmit={handleSubmit}>
       <label>
         Name:
         <input
